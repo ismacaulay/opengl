@@ -12,6 +12,24 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cassert>
+
+#define GL_CALL(x) glClearError();\
+    x;\
+    assert(glLogCall(#x, __FILE__, __LINE__))
+
+static void glClearError() {
+    while(glGetError() != GL_NO_ERROR);
+}
+
+static bool glLogCall(const char* function, const char* file, int line) {
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cout << "[opengl error] " << file << "::" << function << ":" << line << ": " << err << std::endl;
+        return false;
+    }
+    return true;
+}
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -82,15 +100,7 @@ static unsigned int createShader(std::string& vertexShader, std::string& fragmen
     return program;
 }
 
-void glClearError() {
-    while(glGetError() != GL_NO_ERROR);
-}
 
-void glCheckError() {
-    while(GLenum err = glGetError()) {
-        std::cout << "[opengl error] " << err << std::endl;
-    }
-}
 
 int main(int argc, const char** argv) {
 
@@ -176,7 +186,7 @@ int main(int argc, const char** argv) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
