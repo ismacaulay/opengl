@@ -81,6 +81,7 @@ int main(int argc, const char** argv) {
     glfwMakeContextCurrent(window);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+#ifdef __linux__
     unsigned int err = glewInit();
     if (err != GLEW_OK) {
         std::cout << "Failed to init glew: " << err << std::endl;
@@ -92,6 +93,11 @@ int main(int argc, const char** argv) {
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
     }
+#elif __APPLE__
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+#endif
 
     float positions[] = {
         -0.5f, -0.5f,
