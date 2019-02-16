@@ -1,7 +1,12 @@
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
 #include <OpenGL/glext.h>
+#else
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #endif
+
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -44,10 +49,17 @@ static unsigned int createShader(std::string& vertexShader, std::string& fragmen
     return program;
 }
 
-int main(void) {
+void printGlError() {
+    std::cout << glGetError() << std::endl;
+}
+
+int main(int argc, const char** argv) {
+
     /* Initialize the library */
-    if (!glfwInit())
+    if (!glfwInit()) {
+        std::cout << "Failed to init glfw" << std::endl;
         return -1;
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -60,6 +72,7 @@ int main(void) {
     unsigned int height = 600;
     GLFWwindow* window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
     if (!window) {
+        std::cout << "Failed to create window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -68,9 +81,17 @@ int main(void) {
     glfwMakeContextCurrent(window);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    unsigned int err = glewInit();
+    if (err != GLEW_OK) {
+        std::cout << "Failed to init glew: " << err << std::endl;
+        return -1;
+    }
+
+    if(GLEW_ARB_vertex_array_object) {
+        unsigned int vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+    }
 
     float positions[] = {
         -0.5f, -0.5f,
@@ -107,7 +128,6 @@ int main(void) {
 
     unsigned int shader = createShader(vertexShader, fragmentShader);
     glUseProgram(shader);
-
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
