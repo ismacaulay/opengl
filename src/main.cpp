@@ -9,6 +9,39 @@
 
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+struct ShaderProgramSource {
+    std::string vertexSource;
+    std::string fragmentSource;
+};
+
+static ShaderProgramSource parseShader(const std::string& path) {
+    std::ifstream stream(path);
+
+    enum class ShaderType {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+    std::stringstream ss[2];
+    ShaderType mode = ShaderType::NONE;
+
+    std::string line;
+    while (getline(stream, line)) {
+        if (line.find("#shader") != std::string::npos) {
+            if (line.find("vertex") != std::string::npos) {
+                mode = ShaderType::VERTEX;
+            } else if (line.find("fragment") != std::string::npos) {
+                mode = ShaderType::FRAGMENT;
+            }
+        } else {
+            ss[static_cast<int>(mode)] << line << "\n";
+        }
+    }
+
+    return { ss[0].str(), ss[1].str() };
+}
 
 static unsigned int compileShader(unsigned int type, std::string& source) {
     unsigned int id = glCreateShader(type);
@@ -132,7 +165,8 @@ int main(int argc, const char** argv) {
         "}"
         "";
 
-    unsigned int shader = createShader(vertexShader, fragmentShader);
+    ShaderProgramSource source = parseShader("res/shaders/basic.shader");
+    unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
 
     /* Loop until the user closes the window */
@@ -150,6 +184,8 @@ int main(int argc, const char** argv) {
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    glDeleteProgram(shader);
 
     glfwTerminate();
     return 0;
