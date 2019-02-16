@@ -1,0 +1,6 @@
+
+def build(bld):
+    bld.program(
+        source='main.cpp',
+        target='app'
+    )
