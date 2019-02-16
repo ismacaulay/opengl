@@ -44,37 +44,28 @@ static unsigned int createShader(std::string& vertexShader, std::string& fragmen
     return program;
 }
 
-int main(void)
-{
-    GLFWwindow* window;
-
+int main(void) {
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
     /* Create a windowed mode window and its OpenGL context */
-    unsigned int width = 640;
-    unsigned int height = 480;
-    window = glfwCreateWindow(width-1, height, "Hello World", NULL, NULL);
-    glfwPollEvents();
-    glfwSetWindowSize(window, width, height);
-
-    if (!window)
-    {
+    unsigned int width = 800;
+    unsigned int height = 600;
+    GLFWwindow* window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+    if (!window) {
         glfwTerminate();
         return -1;
     }
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-
     std::cout << glGetString(GL_VERSION) << std::endl;
 
     GLuint vao;
@@ -117,10 +108,12 @@ int main(void)
     unsigned int shader = createShader(vertexShader, fragmentShader);
     glUseProgram(shader);
 
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
