@@ -14,6 +14,7 @@
 #include <sstream>
 #include <cassert>
 
+// Dont do this in a release build
 #define GL_CALL(x) glClearError();\
     x;\
     assert(glLogCall(#x, __FILE__, __LINE__))
@@ -100,8 +101,6 @@ static unsigned int createShader(std::string& vertexShader, std::string& fragmen
     return program;
 }
 
-
-
 int main(int argc, const char** argv) {
 
     /* Initialize the library */
@@ -128,6 +127,7 @@ int main(int argc, const char** argv) {
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
 #ifdef __linux__
@@ -179,14 +179,27 @@ int main(int argc, const char** argv) {
     unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
 
-    /* Loop until the user closes the window */
+    int location = glGetUniformLocation(shader, "u_color");
+    assert(location != -1);
+    glUniform4f(location, 0.2f, 0.4f, 0.8f, 1.0f);
+
+    float r = 0.0;
+    float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUniform4f(location, r, 0.4f, 0.8f, 1.0f);
         GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+        if (r > 1.0f) {
+            increment = -0.05f;
+        } else if (r < 0.0f) {
+            increment = 0.05f;
+        }
+        r += increment;
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
