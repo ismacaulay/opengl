@@ -82,8 +82,14 @@ static unsigned int createShader(std::string& vertexShader, std::string& fragmen
     return program;
 }
 
-void printGlError() {
-    std::cout << glGetError() << std::endl;
+void glClearError() {
+    while(glGetError() != GL_NO_ERROR);
+}
+
+void glCheckError() {
+    while(GLenum err = glGetError()) {
+        std::cout << "[opengl error] " << err << std::endl;
+    }
 }
 
 int main(int argc, const char** argv) {
@@ -133,37 +139,31 @@ int main(int argc, const char** argv) {
 #endif
 
     float positions[] = {
-        -0.5f, -0.5f,
-        0.0f, 0.5f,
-        0.5f, -0.5f,
+        -0.5f, -0.5f, // 0
+         0.5f, -0.5f, // 1
+         0.5f,  0.5f, // 2
+        -0.5f,  0.5f, // 3
     };
-    unsigned int buffer;
-    glGenBuffers(1, &buffer); // set buffer as the id of the generated buffer
 
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0,
+    };
+
+    // vertex buffer
+    unsigned int buffer;
+    glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
-    std::string vertexShader =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) in vec4 position;\n"
-        "\n"
-        "void main() {\n"
-        "   gl_Position = position;\n"
-        "}"
-        "";
-
-    std::string fragmentShader =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) out vec4 color;\n"
-        "\n"
-        "void main() {\n"
-        "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}"
-        "";
+    // index buffer
+    unsigned int ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     ShaderProgramSource source = parseShader("res/shaders/basic.shader");
     unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
@@ -176,7 +176,7 @@ int main(int argc, const char** argv) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
