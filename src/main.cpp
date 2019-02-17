@@ -54,14 +54,6 @@ int main(int argc, const char** argv) {
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-// #ifdef __linux__
-//     unsigned int err = glewInit();
-//     if (err != GLEW_OK) {
-//         std::cout << "Failed to init glew: " << err << std::endl;
-//         return -1;
-//     }
-// #endif
-
     float positions[] = {
         -0.5f, -0.5f, 0.0f, 0.0f, // 0: x, y, s, t
          0.5f, -0.5f, 1.0f, 0.0f, // 1

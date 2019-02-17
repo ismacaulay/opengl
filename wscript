@@ -34,7 +34,8 @@ def configure(conf):
     elif sys.platform == 'linux':
         conf.env.LINKFLAGS.extend([
             '-lGL',
-            '-lGLEW'
+            '-lGLEW',
+            '-ldl',
         ])
 
 def build(bld):

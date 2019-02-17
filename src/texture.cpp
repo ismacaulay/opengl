@@ -3,7 +3,6 @@
 #include "renderer.h"
 #include "vendor/stb_image/stb_image.h"
 
-#include <iostream>
 Texture::Texture(const std::string& filepath)
     : rendererID_(0)
     , filepath_(filepath)
