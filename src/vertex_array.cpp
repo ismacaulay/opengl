@@ -4,6 +4,9 @@
 #include "vertex_buffer_layout.h"
 #include "renderer.h"
 
+
+#include <iostream>
+
 VertexArray::VertexArray() {
     if(GLEW_ARB_vertex_array_object) {
         GL_CALL(glGenVertexArrays(1, &rendererID_));
@@ -25,7 +28,7 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
     for (auto i = 0ul; i < elements.size(); i++) {
         const auto& element = elements[i];
         GL_CALL(glEnableVertexAttribArray(i));
-        GL_CALL(glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), 0));
+        GL_CALL(glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), (const void*)offset));
         offset += element.count * VertexBufferElement::getSizeOfType(element.type);
     }
 }

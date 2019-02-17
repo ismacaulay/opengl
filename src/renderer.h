@@ -1,18 +1,23 @@
 #pragma once
 
-#ifndef __APPLE__
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#include <OpenGL/glext.h>
+#else
 #include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #endif
+
 #include <cassert>
+
+void glClearError();
+bool glLogCall(const char* function, const char* file, int line);
 
 // Dont call this all the time in a release build
 #define GL_CALL(x) glClearError();\
     x;\
     assert(glLogCall(#x, __FILE__, __LINE__))
-
-void glClearError();
-bool glLogCall(const char* function, const char* file, int line);
-
 
 class VertexArray;
 class IndexBuffer;

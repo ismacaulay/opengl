@@ -1,7 +1,10 @@
 
 def build(bld):
+    bld.recurse('vendor')
+
     bld.program(
         source=bld.path.ant_glob('*.cpp'),
+        use=['stb_image'],
         include=['.'],
         target='app'
     )

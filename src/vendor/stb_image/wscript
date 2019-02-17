@@ -1,0 +1,7 @@
+
+def build(bld):
+    bld.stlib(
+        source='stb_image.cpp',
+        includes='.',
+        target='stb_image',
+    )

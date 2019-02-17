@@ -1,21 +1,14 @@
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/glext.h>
-#else
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "renderer.h"
-#include "vertex_buffer.h"
 #include "index_buffer.h"
+#include "renderer.h"
+#include "shader.h"
+#include "texture.h"
 #include "vertex_array.h"
 #include "vertex_buffer_layout.h"
-#include "shader.h"
+#include "vertex_buffer.h"
+
+#include <GLFW/glfw3.h> // must be included after renderer.h
 
 int main(int argc, const char** argv) {
 
@@ -46,6 +39,9 @@ int main(int argc, const char** argv) {
     glfwSwapInterval(1);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    // GL_CALL(glEnable(GL_BLEND));
+    // GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
 #ifdef __linux__
     unsigned int err = glewInit();
     if (err != GLEW_OK) {
@@ -55,10 +51,10 @@ int main(int argc, const char** argv) {
 #endif
 
     float positions[] = {
-        -0.5f, -0.5f, // 0
-         0.5f, -0.5f, // 1
-         0.5f,  0.5f, // 2
-        -0.5f,  0.5f, // 3
+        -0.5f, -0.5f, 0.0f, 0.0f, // 0: x, y, s, t
+         0.5f, -0.5f, 1.0f, 0.0f, // 1
+         0.5f,  0.5f, 1.0f, 1.0f, // 2
+        -0.5f,  0.5f, 0.0f, 1.0f, // 3
     };
 
     unsigned int indices[] = {
@@ -67,16 +63,23 @@ int main(int argc, const char** argv) {
     };
 
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
     VertexBufferLayout layout;
+    layout.push<float>(2);
     layout.push<float>(2);
     va.addBuffer(vb, layout);
 
     IndexBuffer ib(indices, 6);
 
-    Shader shader("res/shaders/basic.shader");
+    // Shader shader("res/shaders/basic.shader");
+    Shader shader("res/shaders/texture.shader");
     shader.bind();
-    shader.setUniform4f("u_color", 0.2f, 0.4f, 0.8f, 1.0f);
+    // shader.setUniform4f("u_color", 0.2f, 0.4f, 0.8f, 1.0f);
+
+    Texture texture("res/textures/ironmanicon.jpeg");
+    // Texture texture("res/textures/mario.png");
+    texture.bind();
+    shader.setUniform1i("u_texture", 0);
 
     va.unbind();
     shader.unbind();
@@ -92,7 +95,7 @@ int main(int argc, const char** argv) {
         renderer.clear();
 
         shader.bind();
-        shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
+        // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
 
         renderer.draw(va, ib, shader);
 
