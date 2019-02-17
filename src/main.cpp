@@ -14,23 +14,11 @@
 #include <sstream>
 #include <cassert>
 
-// Dont do this in a release build
-#define GL_CALL(x) glClearError();\
-    x;\
-    assert(glLogCall(#x, __FILE__, __LINE__))
-
-static void glClearError() {
-    while(glGetError() != GL_NO_ERROR);
-}
-
-static bool glLogCall(const char* function, const char* file, int line) {
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-        std::cout << "[opengl error] " << file << "::" << function << ":" << line << ": " << err << std::endl;
-        return false;
-    }
-    return true;
-}
+#include "renderer.h"
+#include "vertex_buffer.h"
+#include "index_buffer.h"
+#include "vertex_array.h"
+#include "vertex_buffer_layout.h"
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -136,16 +124,6 @@ int main(int argc, const char** argv) {
         std::cout << "Failed to init glew: " << err << std::endl;
         return -1;
     }
-
-    if(GLEW_ARB_vertex_array_object) {
-        unsigned int vao;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-    }
-#elif __APPLE__
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
 #endif
 
     float positions[] = {
@@ -160,21 +138,13 @@ int main(int argc, const char** argv) {
         2, 3, 0,
     };
 
-    // vertex buffer
-    unsigned int buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+    VertexArray va;
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBufferLayout layout;
+    layout.push<float>(2);
+    va.addBuffer(vb, layout);
 
-    // vertex attributes
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-
-    // index buffer
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    IndexBuffer ib(indices, 6);
 
     ShaderProgramSource source = parseShader("res/shaders/basic.shader");
     unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
@@ -184,6 +154,10 @@ int main(int argc, const char** argv) {
     assert(location != -1);
     glUniform4f(location, 0.2f, 0.4f, 0.8f, 1.0f);
 
+    GL_CALL(glUseProgram(0));
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
     float r = 0.0;
     float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
@@ -192,8 +166,14 @@ int main(int argc, const char** argv) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        va.bind();
+        vb.bind();
+        ib.bind();
+        GL_CALL(glUseProgram(shader));
+
         glUniform4f(location, r, 0.4f, 0.8f, 1.0f);
-        GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+        GL_CALL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
 
         if (r > 1.0f) {
             increment = -0.05f;

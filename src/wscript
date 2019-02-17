@@ -1,6 +1,7 @@
 
 def build(bld):
     bld.program(
-        source='main.cpp',
+        source=bld.path.ant_glob('*.cpp'),
+        include=['.'],
         target='app'
     )

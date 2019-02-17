@@ -14,6 +14,7 @@ def configure(conf):
         '-Wall',
         '-Werror',
         '-O2',
+        '-Wno-int-to-pointer-cast',
     ]
 
     conf.env.LINKFLAGS = [
