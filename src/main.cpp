@@ -83,20 +83,18 @@ int main(int argc, const char** argv) {
     vb.unbind();
     ib.unbind();
 
+    Renderer renderer;
+
     float r = 0.0;
     float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
 
-        va.bind();
-        vb.bind();
-        ib.bind();
         shader.bind();
         shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
 
-        GL_CALL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+        renderer.draw(va, ib, shader);
 
         if (r > 1.0f) {
             increment = -0.05f;

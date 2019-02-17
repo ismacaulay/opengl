@@ -8,7 +8,7 @@ public:
     void bind() const;
     void unbind() const;
 
-    inline unsigned int getCount() { return count_; }
+    inline unsigned int getCount() const { return count_; }
 
 private:
     unsigned int rendererID_;

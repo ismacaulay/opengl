@@ -12,3 +12,17 @@
 
 void glClearError();
 bool glLogCall(const char* function, const char* file, int line);
+
+
+class VertexArray;
+class IndexBuffer;
+class Shader;
+
+class Renderer {
+public:
+
+    void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+    void clear() const;
+private:
+
+};

@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include "vertex_array.h"
+#include "index_buffer.h"
+#include "shader.h"
+
 void glClearError() {
     while(glGetError() != GL_NO_ERROR);
 }
@@ -13,4 +17,18 @@ bool glLogCall(const char* function, const char* file, int line) {
         return false;
     }
     return true;
+}
+
+
+void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
+    va.bind();
+    shader.bind();
+    ib.bind();
+
+    GL_CALL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+}
+
+void Renderer::clear() const {
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
