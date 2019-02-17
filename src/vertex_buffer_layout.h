@@ -40,7 +40,7 @@ public:
         assert(false);
     }
 
-    inline const std::vector<VertexBufferElement> getElements() const { return elements_; }
+    inline const std::vector<VertexBufferElement>& getElements() const { return elements_; }
     inline unsigned int getStride() const { return stride_; }
 
 private:
