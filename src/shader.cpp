@@ -1,6 +1,9 @@
 #include "shader.h"
 
+#ifdef __APPLE__
+#else
 #include <GL/glew.h>
+#endif
 
 #include <iostream>
 #include <fstream>

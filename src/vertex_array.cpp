@@ -1,22 +1,25 @@
 #include "vertex_array.h"
 
+#ifdef __APPLE__
+#define CHECK_VAO_SUPPORTED(x) x;
+#else
+#include <GL/glew.h>
+#define CHECK_VAO_SUPPORTED(x)\
+    if(GLEW_ARB_vertex_array_object) {\
+        x;\
+    }
+#endif
+
 #include "vertex_buffer.h"
 #include "vertex_buffer_layout.h"
 #include "renderer.h"
 
-
-#include <iostream>
-
 VertexArray::VertexArray() {
-    if(GLEW_ARB_vertex_array_object) {
-        GL_CALL(glGenVertexArrays(1, &rendererID_));
-    }
+    CHECK_VAO_SUPPORTED(GL_CALL(glGenVertexArrays(1, &rendererID_)))
 }
 
 VertexArray::~VertexArray() {
-    if(GLEW_ARB_vertex_array_object) {
-        GL_CALL(glDeleteVertexArrays(1, &rendererID_));
-    }
+    CHECK_VAO_SUPPORTED(GL_CALL(glDeleteVertexArrays(1, &rendererID_)))
 }
 
 void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
@@ -34,13 +37,9 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 }
 
 void VertexArray::bind() const {
-    if(GLEW_ARB_vertex_array_object) {
-        GL_CALL(glBindVertexArray(rendererID_));
-    }
+    CHECK_VAO_SUPPORTED(GL_CALL(glBindVertexArray(rendererID_)))
 }
 
 void VertexArray::unbind() const {
-    if(GLEW_ARB_vertex_array_object) {
-        GL_CALL(glBindVertexArray(0));
-    }
+    CHECK_VAO_SUPPORTED(GL_CALL(glBindVertexArray(0)))
 }
