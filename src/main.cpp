@@ -10,8 +10,13 @@
 
 #include <GLFW/glfw3.h> // must be included after renderer.h
 
-int main(int argc, const char** argv) {
+void processInput(GLFWwindow *window) {
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
 
+int main(int argc, const char** argv) {
     /* Initialize the library */
     if (!glfwInit()) {
         std::cout << "Failed to init glfw" << std::endl;
@@ -27,7 +32,7 @@ int main(int argc, const char** argv) {
     /* Create a windowed mode window and its OpenGL context */
     unsigned int width = 800;
     unsigned int height = 600;
-    GLFWwindow* window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, "Learn OpenGL", NULL, NULL);
     if (!window) {
         std::cout << "Failed to create window" << std::endl;
         glfwTerminate();
@@ -37,18 +42,25 @@ int main(int argc, const char** argv) {
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-    std::cout << glGetString(GL_VERSION) << std::endl;
 
-    // GL_CALL(glEnable(GL_BLEND));
-    // GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-#ifdef __linux__
-    unsigned int err = glewInit();
-    if (err != GLEW_OK) {
-        std::cout << "Failed to init glew: " << err << std::endl;
+    /* init glad - must be done before an opengl call */
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-#endif
+
+    std::cout << glGetString(GL_VERSION) << std::endl;
+
+    GL_CALL(glEnable(GL_BLEND));
+    GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+// #ifdef __linux__
+//     unsigned int err = glewInit();
+//     if (err != GLEW_OK) {
+//         std::cout << "Failed to init glew: " << err << std::endl;
+//         return -1;
+//     }
+// #endif
 
     float positions[] = {
         -0.5f, -0.5f, 0.0f, 0.0f, // 0: x, y, s, t
@@ -88,23 +100,25 @@ int main(int argc, const char** argv) {
 
     Renderer renderer;
 
-    float r = 0.0;
-    float increment = 0.05f;
+    // float r = 0.0;
+    // float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
     {
+        processInput(window);
+
         renderer.clear();
 
         shader.bind();
-        // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
+        // // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
 
         renderer.draw(va, ib, shader);
 
-        if (r > 1.0f) {
-            increment = -0.05f;
-        } else if (r < 0.0f) {
-            increment = 0.05f;
-        }
-        r += increment;
+        // if (r > 1.0f) {
+        //     increment = -0.05f;
+        // } else if (r < 0.0f) {
+        //     increment = 0.05f;
+        // }
+        // r += increment;
 
         glfwSwapBuffers(window);
         glfwPollEvents();

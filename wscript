@@ -3,11 +3,13 @@ import sys
 top = '.'
 out = '.build'
 
+tools = 'compiler_cxx compiler_c'
+
 def options(opt):
-    opt.load('compiler_cxx')
+    opt.load(tools)
 
 def configure(conf):
-    conf.load('compiler_cxx')
+    conf.load(tools)
 
     conf.env.CXXFLAGS = [
         '--std=c++11',
@@ -25,8 +27,8 @@ def configure(conf):
         conf.env.FRAMEWORK = ['OpenGL']
         conf.env.DEFINES = [
             'GL_SILENCE_DEPRECATION',
-            '__gl_h_',
-            'GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED',
+            # '__gl_h_',
+            # 'GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED',
         ]
 
     elif sys.platform == 'linux':

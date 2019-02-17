@@ -3,7 +3,7 @@
 #ifdef __APPLE__
 #define CHECK_VAO_SUPPORTED(x) x;
 #else
-#include <GL/glew.h>
+// #include <GL/glew.h>
 #define CHECK_VAO_SUPPORTED(x)\
     if(GLEW_ARB_vertex_array_object) {\
         x;\

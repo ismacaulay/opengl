@@ -1,3 +1,4 @@
 
 def build(bld):
+    bld.recurse('glad')
     bld.recurse('stb_image')
