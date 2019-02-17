@@ -1,16 +1,6 @@
 #pragma once
 
 #include <glad/glad.h>
-
-// #ifdef __APPLE__
-// #include <OpenGL/gl3.h>
-// #include <OpenGL/glext.h>
-// #else
-// #include <GL/glew.h>
-// #include <GL/gl.h>
-// #include <GL/glu.h>
-// #endif
-
 #include <cassert>
 
 void glClearError();
