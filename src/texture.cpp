@@ -1,7 +1,7 @@
 #include "texture.h"
 
 #include "renderer.h"
-#include "vendor/stb_image/stb_image.h"
+#include "stb_image/stb_image.h"
 
 Texture::Texture(const std::string& filepath)
     : rendererID_(0)

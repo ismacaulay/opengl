@@ -44,6 +44,10 @@ void Shader::setUniform1i(const std::string& name, int v) {
     GL_CALL(glUniform1i(getUniformLocation(name), v));
 }
 
+void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
+    GL_CALL(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
 ShaderProgramSource Shader::parseShader(const std::string& path) {
     std::ifstream stream(path);
 

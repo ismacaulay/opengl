@@ -8,6 +8,9 @@
 #include "vertex_buffer_layout.h"
 #include "vertex_buffer.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 #include <GLFW/glfw3.h> // must be included after renderer.h
 
 float mixParam = 0.5f;
@@ -116,6 +119,9 @@ int main(int argc, const char** argv) {
     // shader.setUniform4f("u_color", 0.2f, 0.4f, 0.8f, 1.0f);
     // shader.setUniform1f("u_offset", 0.25);
     shader.setUniform1f("u_mix", mixParam);
+
+    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+    shader.setUniformMat4f("u_modelViewProjection", proj);
 
     Texture texture1("res/textures/awesomeface.png");
     Texture texture2("res/textures/ironmanicon.jpeg");
