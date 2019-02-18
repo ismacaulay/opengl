@@ -1,13 +1,16 @@
 #shader vertex
 #version 330 core
 
-layout(location = 0) in vec2 a_position;
-layout(location = 1) in vec2 a_texCoord;
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_color;
+layout(location = 2) in vec2 a_texCoord;
 
+out vec3 v_color;
 out vec2 v_texCoord;
 
 void main() {
-   gl_Position = vec4(a_position, 0.0, 1.0);
+   gl_Position = vec4(a_position, 1.0);
+   v_color = a_color;
    v_texCoord = a_texCoord;
 }
 
@@ -16,10 +19,14 @@ void main() {
 
 layout(location = 0) out vec4 frag_color;
 
+in vec3 v_color;
 in vec2 v_texCoord;
 
-uniform sampler2D u_texture;
+uniform sampler2D u_texture1;
+uniform sampler2D u_texture2;
+uniform float u_mix;
 
 void main() {
-   frag_color = texture(u_texture, v_texCoord);
+   // frag_color = texture(u_texture, v_texCoord) * vec4(v_color, 1.0);
+   frag_color = mix(texture(u_texture1, vec2(1.0f - v_texCoord.x, v_texCoord.y)), texture(u_texture2, v_texCoord), u_mix);
 }

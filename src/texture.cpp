@@ -24,11 +24,11 @@ Texture::Texture(const std::string& filepath)
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
     GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer_));
-
-    unbind();
+    GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
 
     if (localBuffer_) {
         stbi_image_free(localBuffer_);
+        localBuffer_ = nullptr;
     }
 }
 
