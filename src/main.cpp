@@ -16,6 +16,11 @@ void processInput(GLFWwindow *window) {
     }
 }
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 int main(int argc, const char** argv) {
     /* Initialize the library */
     if (!glfwInit()) {
@@ -50,40 +55,57 @@ int main(int argc, const char** argv) {
     }
 
     std::cout << glGetString(GL_VERSION) << std::endl;
+    glViewport(0, 0, width, height);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    float positions[] = {
-        -0.5f, -0.5f, 0.0f, 0.0f, // 0: x, y, s, t
-         0.5f, -0.5f, 1.0f, 0.0f, // 1
-         0.5f,  0.5f, 1.0f, 1.0f, // 2
-        -0.5f,  0.5f, 0.0f, 1.0f, // 3
+    float triangle[] = {
+         // positions  // colors
+         0.5f, -0.5f,  1.0f, 0.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,   // bottom left
+         0.0f,  0.5f,  0.0f, 0.0f, 1.0f    // top
     };
-
     unsigned int indices[] = {
         0, 1, 2,
-        2, 3, 0,
     };
-
-    VertexArray va;
-    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+    VertexBuffer vb(triangle, 3 * 5 * sizeof(float));
     VertexBufferLayout layout;
     layout.push<float>(2);
-    layout.push<float>(2);
+    layout.push<float>(3);
+    IndexBuffer ib(indices, 3);
+
+    // float positions[] = {
+    //     -0.5f, -0.5f, 0.0f, 0.0f, // 0: x, y, s, t
+    //      0.5f, -0.5f, 1.0f, 0.0f, // 1
+    //      0.5f,  0.5f, 1.0f, 1.0f, // 2
+    //     -0.5f,  0.5f, 0.0f, 1.0f, // 3
+    // };
+    // unsigned int indices[] = {
+    //     0, 1, 2,
+    //     2, 3, 0,
+    // };
+    // VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+    // VertexBufferLayout layout;
+    // layout.push<float>(2);
+    // layout.push<float>(2);
+    // IndexBuffer ib(indices, 6);
+
+    VertexArray va;
     va.addBuffer(vb, layout);
 
-    IndexBuffer ib(indices, 6);
-
     // Shader shader("res/shaders/basic.shader");
-    Shader shader("res/shaders/texture.shader");
+    // Shader shader("res/shaders/texture.shader");
+    Shader shader("res/shaders/color.shader");
     shader.bind();
     // shader.setUniform4f("u_color", 0.2f, 0.4f, 0.8f, 1.0f);
+    shader.setUniform1f("u_offset", 0.25);
 
-    Texture texture("res/textures/ironmanicon.jpeg");
     // Texture texture("res/textures/mario.png");
-    texture.bind();
-    shader.setUniform1i("u_texture", 0);
+    // Texture texture("res/textures/mario.png");
+    // texture.bind();
+    // shader.setUniform1i("u_texture", 0);
 
     va.unbind();
     shader.unbind();
@@ -92,8 +114,8 @@ int main(int argc, const char** argv) {
 
     Renderer renderer;
 
-    // float r = 0.0;
-    // float increment = 0.05f;
+    float r = 0.0;
+    float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -102,15 +124,16 @@ int main(int argc, const char** argv) {
 
         shader.bind();
         // // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
+        shader.setUniform1f("u_offset", r);
 
         renderer.draw(va, ib, shader);
 
-        // if (r > 1.0f) {
-        //     increment = -0.05f;
-        // } else if (r < 0.0f) {
-        //     increment = 0.05f;
-        // }
-        // r += increment;
+        if (r > 1.0f) {
+            increment = -0.05f;
+        } else if (r < -1.0f) {
+            increment = 0.05f;
+        }
+        r += increment;
 
         glfwSwapBuffers(window);
         glfwPollEvents();
