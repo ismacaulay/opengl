@@ -1,9 +1,0 @@
-
-def build(bld):
-    bld.stlib(
-        features='c',
-        source='src/glad.c',
-        includes=['include'],
-        export_includes=['include'],
-        target='glad',
-    )

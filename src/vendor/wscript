@@ -1,4 +1,22 @@
 
 def build(bld):
-    bld.recurse('glad')
-    bld.recurse('stb_image')
+    bld.stlib(
+        features='c',
+        source='glad/src/glad.c',
+        includes=['glad/include'],
+        export_includes=['glad/include'],
+        target='glad',
+    )
+
+    bld(
+        includes=['glm'],
+        export_includes=['.'],
+        name='glm',
+    )
+
+    bld.stlib(
+        source='stb_image/stb_image.cpp',
+        includes=['stb_image'],
+        export_includes=['.'],
+        target='stb_image',
+    )
