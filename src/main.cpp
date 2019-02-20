@@ -31,8 +31,7 @@ void processInput(GLFWwindow *window) {
     }
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
@@ -50,8 +49,8 @@ int main(int argc, const char** argv) {
 #endif
 
     /* Create a windowed mode window and its OpenGL context */
-    unsigned int width = 800;
-    unsigned int height = 600;
+    float width = 800.0f;
+    float height = 600.0f;
     GLFWwindow* window = glfwCreateWindow(width, height, "Learn OpenGL", NULL, NULL);
     if (!window) {
         std::cout << "Failed to create window" << std::endl;
@@ -91,23 +90,85 @@ int main(int argc, const char** argv) {
     // layout.push<float>(3);
     // IndexBuffer ib(indices, 3);
 
-    float positions[] = {
-        // positions       // colors         // tex coords
-        -0.5f, -0.5f, 0.0, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // 0: x, y, s, t
-         0.5f, -0.5f, 0.0, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 1
-         0.5f,  0.5f, 0.0, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 2
-        -0.5f,  0.5f, 0.0, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 3
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
     };
-    VertexBuffer vb(positions, 4 * 8 * sizeof(float));
+
+    VertexBuffer vb(vertices, 36 * 5 * sizeof(float));
     VertexBufferLayout layout;
     layout.push<float>(3);
-    layout.push<float>(3);
     layout.push<float>(2);
-    IndexBuffer ib(indices, 6);
+
+    // float positions[] = {
+    //     // positions       // colors         // tex coords
+    //     -0.5f, -0.5f, 0.0, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // 0: x, y, s, t
+    //      0.5f, -0.5f, 0.0, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 1
+    //      0.5f,  0.5f, 0.0, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 2
+    //     -0.5f,  0.5f, 0.0, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 3
+    // };
+    // unsigned int indices[] = {
+    //     0, 1, 2,
+    //     2, 3, 0,
+    // };
+    // VertexBuffer vb(positions, 4 * 8 * sizeof(float));
+    // VertexBufferLayout layout;
+    // layout.push<float>(3);
+    // layout.push<float>(3);
+    // layout.push<float>(2);
+    // IndexBuffer ib(indices, 6);
 
     VertexArray va;
     va.addBuffer(vb, layout);
@@ -120,22 +181,13 @@ int main(int argc, const char** argv) {
     // shader.setUniform1f("u_offset", 0.25);
     shader.setUniform1f("u_mix", mixParam);
 
-    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
-    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-
-    glm::mat4 mvp = proj * view * model;
-
-    shader.setUniformMat4f("u_modelViewProjection", mvp);
-
     Texture texture1("res/textures/awesomeface.png");
     Texture texture2("res/textures/ironmanicon.jpeg");
 
     texture1.bind(0);
-    shader.setUniform1i("u_texture1", 1);
+    shader.setUniform1i("u_texture1", 0);
     texture2.bind(1);
-    shader.setUniform1i("u_texture2", 0);
+    shader.setUniform1i("u_texture2", 1);
 
     // va.unbind();
     // shader.unbind();
@@ -152,12 +204,32 @@ int main(int argc, const char** argv) {
 
         renderer.clear();
 
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 proj = glm::perspective(glm::radians(45.0f), width/height, 0.1f, 100.0f);
+
         shader.bind();
+        shader.setUniformMat4f("u_view", view);
+        shader.setUniformMat4f("u_proj", proj);
+
         // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
         // shader.setUniform1f("u_offset", r);
         shader.setUniform1f("u_mix", mixParam);
 
-        renderer.draw(va, ib, shader);
+        // renderer.draw(va, ib, shader);
+
+        va.bind();
+        for (int i = 0; i < 10; i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+
+            float rotation = 20.0f * i;
+            model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setUniformMat4f("u_model", model);
+
+            GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 36));
+        }
 
         // if (r > 1.0f) {
         //     increment = -0.05f;
