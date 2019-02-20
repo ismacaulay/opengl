@@ -121,7 +121,13 @@ int main(int argc, const char** argv) {
     shader.setUniform1f("u_mix", mixParam);
 
     glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-    shader.setUniformMat4f("u_modelViewProjection", proj);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+
+    glm::mat4 mvp = proj * view * model;
+
+    shader.setUniformMat4f("u_modelViewProjection", mvp);
 
     Texture texture1("res/textures/awesomeface.png");
     Texture texture2("res/textures/ironmanicon.jpeg");
