@@ -8,7 +8,7 @@ uniform mat4 u_view;
 uniform mat4 u_proj;
 
 void main() {
-   gl_Position = u_proj * u_view * u_model * vec4(a_position, 1.0);
+    gl_Position = u_proj * u_view * u_model * vec4(a_position, 1.0);
 }
 
 #shader fragment
@@ -16,8 +16,9 @@ void main() {
 
 layout(location = 0) out vec4 frag_color;
 
-uniform vec4 u_color;
+uniform vec3 u_object_color;
+uniform vec3 u_light_color;
 
 void main() {
-   frag_color = u_color;
+    frag_color = vec4(u_light_color * u_object_color, 1.0);
 }

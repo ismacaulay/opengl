@@ -98,7 +98,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 int main(int argc, const char** argv) {
-    /* Initialize the library */
     if (!glfwInit()) {
         std::cout << "Failed to init glfw" << std::endl;
         return -1;
@@ -110,7 +109,6 @@ int main(int argc, const char** argv) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    /* Create a windowed mode window and its OpenGL context */
     float width = 800.0f;
     float height = 600.0f;
     GLFWwindow* window = glfwCreateWindow(width, height, "Learn OpenGL", NULL, NULL);
@@ -119,12 +117,9 @@ int main(int argc, const char** argv) {
         glfwTerminate();
         return -1;
     }
-
-    /* Make the window's context current */
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-    /* init glad - must be done before an opengl call */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
@@ -136,143 +131,71 @@ int main(int argc, const char** argv) {
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
-
     glfwSetScrollCallback(window, scroll_callback);
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    // float triangle[] = {
-    //      // positions  // colors
-    //      0.5f, -0.5f,  1.0f, 0.0f, 0.0f,   // bottom right
-    //     -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,   // bottom left
-    //      0.0f,  0.5f,  0.0f, 0.0f, 1.0f    // top
-    // };
-    // unsigned int indices[] = {
-    //     0, 1, 2,
-    // };
-    // VertexBuffer vb(triangle, 3 * 5 * sizeof(float));
-    // VertexBufferLayout layout;
-    // layout.push<float>(2);
-    // layout.push<float>(3);
-    // IndexBuffer ib(indices, 3);
+    float cube[] = {
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
 
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
     };
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
-    VertexBuffer vb(vertices, 36 * 5 * sizeof(float));
+    VertexBuffer vb(cube, 36 * 3 * sizeof(float));
     VertexBufferLayout layout;
     layout.push<float>(3);
-    layout.push<float>(2);
 
-    // float positions[] = {
-    //     // positions       // colors         // tex coords
-    //     -0.5f, -0.5f, 0.0, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // 0: x, y, s, t
-    //      0.5f, -0.5f, 0.0, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 1
-    //      0.5f,  0.5f, 0.0, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 2
-    //     -0.5f,  0.5f, 0.0, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 3
-    // };
-    // unsigned int indices[] = {
-    //     0, 1, 2,
-    //     2, 3, 0,
-    // };
-    // VertexBuffer vb(positions, 4 * 8 * sizeof(float));
-    // VertexBufferLayout layout;
-    // layout.push<float>(3);
-    // layout.push<float>(3);
-    // layout.push<float>(2);
-    // IndexBuffer ib(indices, 6);
+    VertexArray cubeVA;
+    cubeVA.addBuffer(vb, layout);
 
-    VertexArray va;
-    va.addBuffer(vb, layout);
+    Shader cubeShader("res/shaders/lighting.shader");
 
-    // Shader shader("res/shaders/basic.shader");
-    Shader shader("res/shaders/texture.shader");
-    // Shader shader("res/shaders/color.shader");
-    shader.bind();
-    // shader.setUniform4f("u_color", 0.2f, 0.4f, 0.8f, 1.0f);
-    // shader.setUniform1f("u_offset", 0.25);
-    shader.setUniform1f("u_mix", mixParam);
+    VertexArray lampVA;
+    lampVA.addBuffer(vb, layout);
 
-    Texture texture1("res/textures/awesomeface.png");
-    Texture texture2("res/textures/ironmanicon.jpeg");
-
-    texture1.bind(0);
-    shader.setUniform1i("u_texture1", 0);
-    texture2.bind(1);
-    shader.setUniform1i("u_texture2", 1);
-
-    // va.unbind();
-    // shader.unbind();
-    // vb.unbind();
-    // ib.unbind();
+    Shader lampShader("res/shaders/basic.shader");
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
     Renderer renderer;
-
-    // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    // glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    // glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-    // glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-    // glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-    // glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-    // glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
-
-    // float r = 0.0;
-    // float increment = 0.05f;
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
@@ -283,51 +206,43 @@ int main(int argc, const char** argv) {
 
         renderer.clear();
 
-        // float radius = 20.0f;
-        // float camX = sin(glfwGetTime()) * radius;
-        // float camZ = cos(glfwGetTime()) * radius;
+        cubeVA.bind();
+        cubeShader.bind();
 
-        // glm::mat4 view = glm::mat4(1.0f);
-        // view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-        glm::mat4 view;
-        // view = glm::lookAt(glm::vec3(camX, 0.0, camZ), cameraTarget, up);
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        cubeShader.setUniform3f("u_object_color", 1.0f, 0.5f, 0.31f);
+        cubeShader.setUniform3f("u_light_color", 1.0f, 1.0f, 1.0f);
 
         glm::mat4 proj = glm::perspective(glm::radians(fov), width/height, 0.1f, 100.0f);
+        glm::mat4 view;
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        glm::mat4 model = glm::mat4(1.0f);
 
-        shader.bind();
-        shader.setUniformMat4f("u_view", view);
-        shader.setUniformMat4f("u_proj", proj);
+        cubeShader.bind();
+        cubeShader.setUniformMat4f("u_view", view);
+        cubeShader.setUniformMat4f("u_proj", proj);
+        cubeShader.setUniformMat4f("u_model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // shader.setUniform4f("u_color", r, 0.4f, 0.8f, 1.0f);
-        // shader.setUniform1f("u_offset", r);
-        shader.setUniform1f("u_mix", mixParam);
+        lampVA.bind();
 
-        // renderer.draw(va, ib, shader);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
 
-        va.bind();
-        for (int i = 0; i < 10; i++) {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
+        lampShader.bind();
+        lampShader.setUniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
+        lampShader.setUniformMat4f("u_view", view);
+        lampShader.setUniformMat4f("u_proj", proj);
+        lampShader.setUniformMat4f("u_model", model);
 
-            float rotation = 20.0f * i;
-            model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setUniformMat4f("u_model", model);
-
-            GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 36));
-        }
-
-        // if (r > 1.0f) {
-        //     increment = -0.05f;
-        // } else if (r < -1.0f) {
-        //     increment = 0.05f;
-        // }
-        // r += increment;
+        GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 36));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    glfwDestroyWindow(window);
     glfwTerminate();
+
     return 0;
 }

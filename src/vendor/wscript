@@ -20,3 +20,12 @@ def build(bld):
         export_includes=['.'],
         target='stb_image',
     )
+
+    # bld.stlib(
+    #     source=bld.path.ant_glob('imgui/*.cpp'),
+    #     use='glad',
+    #     includes=['imgui'],
+    #     export_includes=['.'],
+    #     defines=['IMGUI_IMPL_OPENGL_LOADER_GLAD'],
+    #     target='imgui',
+    # )
