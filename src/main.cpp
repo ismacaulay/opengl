@@ -7,6 +7,7 @@
 #include "vertex_array.h"
 #include "vertex_buffer_layout.h"
 #include "vertex_buffer.h"
+#include "defines.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -136,61 +137,22 @@ int main(int argc, const char** argv) {
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    float cube[] = {
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
 
-        -0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-    };
-
-    VertexBuffer vb(cube, 36 * 3 * sizeof(float));
-    VertexBufferLayout layout;
-    layout.push<float>(3);
+    VertexBuffer vb(Objects::CubeWithNormals, 36 * 6 * sizeof(float));
+    VertexBufferLayout cubeLayout;
+    cubeLayout.push<float>(3);
+    cubeLayout.push<float>(3);
 
     VertexArray cubeVA;
-    cubeVA.addBuffer(vb, layout);
+    cubeVA.addBuffer(vb, cubeLayout);
 
     Shader cubeShader("res/shaders/lighting.shader");
 
+    VertexBufferLayout lampLayout;
+    lampLayout.push<float>(3);
+    lampLayout.push<float>(3);
     VertexArray lampVA;
-    lampVA.addBuffer(vb, layout);
+    lampVA.addBuffer(vb, lampLayout);
 
     Shader lampShader("res/shaders/basic.shader");
     glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -209,8 +171,10 @@ int main(int argc, const char** argv) {
         cubeVA.bind();
         cubeShader.bind();
 
+        cubeShader.setUniform3f("u_light_position", lightPos.x, lightPos.y, lightPos.z);
         cubeShader.setUniform3f("u_object_color", 1.0f, 0.5f, 0.31f);
         cubeShader.setUniform3f("u_light_color", 1.0f, 1.0f, 1.0f);
+        cubeShader.setUniform3f("u_camera_position", cameraPos.x, cameraPos.y, cameraPos.z);
 
         glm::mat4 proj = glm::perspective(glm::radians(fov), width/height, 0.1f, 100.0f);
         glm::mat4 view;
