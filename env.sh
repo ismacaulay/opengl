@@ -7,7 +7,7 @@ export _OLD_PS1=$PS1
 export PATH=$DIR/tools:$PATH
 export PS1="(env)$PS1"
 
-alias app=$DIR/.build/src/app
+alias app=$DIR/.build/src/opengl
 
 deactivate() {
     export PATH=$_OLD_PATH
