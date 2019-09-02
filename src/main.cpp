@@ -146,16 +146,28 @@ int main(int argc, const char** argv) {
     VertexArray cubeVA;
     cubeVA.addBuffer(vb, cubeLayout);
 
-    Shader cubeShader("res/shaders/lighting.shader");
-
     VertexBufferLayout lampLayout;
     lampLayout.push<float>(3);
     lampLayout.push<float>(3);
     VertexArray lampVA;
     lampVA.addBuffer(vb, lampLayout);
 
-    Shader lampShader("res/shaders/basic.shader");
     glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    Shader lampShader("res/shaders/basic.shader");
+    lampShader.bind();
+    lampShader.setUniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
+
+    Shader cubeShader("res/shaders/lighting.shader");
+    cubeShader.bind();
+    cubeShader.setUniform3f("material.ambient", 1.0f, 0.5f, 0.31f);
+    cubeShader.setUniform3f("material.diffuse", 1.0f, 0.5f, 0.31f);
+    cubeShader.setUniform3f("material.specular", 0.5f, 0.5f, 0.5f);
+    cubeShader.setUniform1f("material.shininess", 32.0f);
+
+    cubeShader.setUniform3f("light.ambient",  0.2f, 0.2f, 0.2f);
+    cubeShader.setUniform3f("light.diffuse",  0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
+    cubeShader.setUniform3f("light.specular", 1.0f, 1.0f, 1.0f);
+    cubeShader.setUniform3f("light.position", lightPos.x, lightPos.y, lightPos.z);
 
     Renderer renderer;
     while (!glfwWindowShouldClose(window))
@@ -168,33 +180,37 @@ int main(int argc, const char** argv) {
 
         renderer.clear();
 
-        cubeVA.bind();
-        cubeShader.bind();
-
-        cubeShader.setUniform3f("u_light_position", lightPos.x, lightPos.y, lightPos.z);
-        cubeShader.setUniform3f("u_object_color", 1.0f, 0.5f, 0.31f);
-        cubeShader.setUniform3f("u_light_color", 1.0f, 1.0f, 1.0f);
-        cubeShader.setUniform3f("u_camera_position", cameraPos.x, cameraPos.y, cameraPos.z);
-
         glm::mat4 proj = glm::perspective(glm::radians(fov), width/height, 0.1f, 100.0f);
         glm::mat4 view;
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+        cubeVA.bind();
         glm::mat4 model = glm::mat4(1.0f);
+
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
 
         cubeShader.bind();
         cubeShader.setUniformMat4f("u_view", view);
         cubeShader.setUniformMat4f("u_proj", proj);
         cubeShader.setUniformMat4f("u_model", model);
+        cubeShader.setUniform3f("light.ambient", ambientColor.x, ambientColor.y, ambientColor.z);
+        cubeShader.setUniform3f("light.diffuse", diffuseColor.z, diffuseColor.y, diffuseColor.z);
+
+        cubeShader.setUniform3f("u_camera_position", cameraPos.x, cameraPos.y, cameraPos.z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         lampVA.bind();
-
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
 
         lampShader.bind();
-        lampShader.setUniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
         lampShader.setUniformMat4f("u_view", view);
         lampShader.setUniformMat4f("u_proj", proj);
         lampShader.setUniformMat4f("u_model", model);

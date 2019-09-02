@@ -20,32 +20,45 @@ void main() {
 #shader fragment
 #version 330 core
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 in vec3 v_frag_position;
 in vec3 v_normal;
 
+uniform vec3 u_camera_position;
+uniform Material material;
+uniform Light light;
+
 layout(location = 0) out vec4 frag_color;
 
-uniform vec3 u_light_position;
-uniform vec3 u_object_color;
-uniform vec3 u_light_color;
-uniform vec3 u_camera_position;
-
 void main() {
-    float ambient_str = 0.1;
-    vec3 ambient = ambient_str * u_light_color;
+    // ambient
+    vec3 ambient =  light.ambient * material.ambient;
 
+    // diffuse
     vec3 normal = normalize(v_normal);
-    vec3 light_dir = normalize(u_light_position - v_frag_position);
-
+    vec3 light_dir = normalize(light.position - v_frag_position);
     float diff = max(dot(normal, light_dir), 0.0);
-    vec3 diffuse = diff * u_light_color;
+    vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
-    float specular_str = 0.5;
+    // specular
     vec3 view_dir = normalize(u_camera_position - v_frag_position);
     vec3 reflect_dir = reflect(-light_dir, normal);
-    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 32);
-    vec3 specular = specular_str * spec * u_light_color;
+    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), material.shininess);
+    vec3 specular = light.specular * (spec * material.specular);
 
-    vec3 result = (ambient + diffuse + specular) * u_object_color;
+    vec3 result = ambient + diffuse + specular;
     frag_color = vec4(result, 1.0);
 }
