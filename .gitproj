@@ -1,0 +1,5 @@
+version: 0.1.0
+repos:
+	glm vendor/glm git@github.com:g-truc/glm.git
+states:
+	glm master 0.9.9.5

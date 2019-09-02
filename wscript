@@ -39,4 +39,18 @@ def configure(conf):
         ])
 
 def build(bld):
+    bld.stlib(
+        features='c',
+        source='vendor/glad/src/glad.c',
+        includes=['vendor/glad/include'],
+        export_includes=['vendor/glad/include'],
+        target='glad',
+    )
+
+    bld(
+        includes=['vendor/glm/glm'],
+        export_includes=['vendor/glm'],
+        name='glm',
+    )
+
     bld.recurse('src')
