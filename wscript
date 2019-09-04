@@ -53,4 +53,11 @@ def build(bld):
         name='glm',
     )
 
+    bld.stlib(
+        source='vendor/stb/stb_image.cpp',
+        includes=['vendor/stb'],
+        export_includes=['vendor'],
+        target='stb',
+    )
+
     bld.recurse('src')

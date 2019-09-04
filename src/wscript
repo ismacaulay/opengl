@@ -2,7 +2,7 @@
 def build(bld):
     bld.program(
         source=bld.path.ant_glob('*.cpp'),
-        use=['glad'],
+        use=['glad', 'stb'],
         include=['.'],
         target='opengl'
     )

@@ -58,6 +58,10 @@ void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2,
     GL_CALL(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
 }
 
+void Shader::setUniform1i(const std::string& name, int v) {
+    GL_CALL(glUniform1i(getUniformLocation(name), v));
+}
+
 std::string Shader::loadShader(const std::string& path) {
     std::ifstream file(path);
     file.open(path);

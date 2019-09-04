@@ -38,4 +38,6 @@
 
 # editors
 .vscode
+
+# .gitproj
 vendor/glm
